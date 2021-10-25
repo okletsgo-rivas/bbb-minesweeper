@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import Tile, { TileType } from "./Tile.svelte";
-  import Chat from "./Chat.svelte"
+  import Chat from "./Chat.svelte";
 
   export let width;
   export let height;
@@ -62,13 +62,12 @@
       {/each}
     </div>
   </div>
+  <Chat />
 </main>
-
-<Chat />
 
 <style>
   :global(body) {
-    background-color: #2B2B2B ;
+    background-color: #2b2b2b;
     font-size: 12px;
     font-family: arial;
     display: flex;

@@ -1,57 +1,45 @@
-<script>
-let client = new Colyseus.Client('ws://localhost:2567');
+<!-- <script lang="ts" context="module">
+  import { Client, Room } from "colyseus.js";
+  let client = new Client("http://localhost:2567");
+</script> -->
+<script lang="ts">
+  import { onMount } from "svelte";
+  // import { Client, Room } from "colyseus.js";
+  // import * as Colyseus from "colyseus.js";
 
-client.joinOrCreate("chat_room").then(room => {
+  let chatInput;
+  let messages = [];
+  let room;
+
+  onMount(async () => {
+    // let client = new Client("ws://localhost:2567");
+    let client = new Colyseus.Client("ws://localhost:2567");
+    room = await client.joinOrCreate("chat_room");
     room.state.messages.onAdd = (message, key) => {
-        var p = document.createElement("p");
-        p.innerText = message;
-        let messages = document.querySelector("#messages");
-        messages.appendChild(p);
+      messages.push(message);
+      // Scroll to bottom of chat
+      // messages.scrollTo(0, messages.scrollHeight);
+    };
+  });
 
-        // Scroll to bottom of chat
-        messages.scrollTo(0, messages.scrollHeight);
-    }
-    document.querySelector("#chat-input").onkeyup = (e) => {
-        if (e.keyCode == 13) {
-            // Do not send empty strings
-            if (e.target.value.trim() !== '') {
-                room.send("message", e.target.value);
-            }
-
-            // clear input
-            e.target.value = "";
-        }
-    }
-}).catch(e => {
-    console.log("JOIN ERROR", e);
-});
+  function keyup(e) {
+    if (e.keyCode !== 13 || !chatInput.trim()) return;
+    room.send("message", chatInput);
+    chatInput = "";
+  }
 </script>
 
-<div id="chat">
-    <div id="messages"></div>
-    <input type="text" id="chat-input" />
+<div class="chat">
+  <div class="messages" on:change={() => {}}>
+    {#each messages as msg}
+      <p>{msg}</p>
+    {/each}
+  </div>
+  <input bind:value={chatInput} type="text" id="chat-input" on:keyup={keyup} />
 </div>
 
 <style>
-#chat {
-    background-color: #2B2B2B;
-    height: 240px;
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    border-top: 1px solid #1a1a1a;
-}
-
-#chat input {
-    margin-top: auto;
-    margin-left: 10px;
-    margin-right: 10px;
-    background-color: #222222;
-    color: #ddca7e;
-    border-radius: 5px;
-}
-
-#chat #messages {
+  .messages {
     padding: 10px 20px 0 20px;
     overflow-y: scroll;
     color: #ddca7e;
@@ -59,19 +47,33 @@ client.joinOrCreate("chat_room").then(room => {
     overflow-y: auto;
     scrollbar-width: auto;
     scrollbar-color: #1a1a1a;
-}
-
-/* ===== Scrollbar CSS ===== */
-/* Chrome, Edge, and Safari */
-#messages::-webkit-scrollbar {
+  }
+  /* ===== Scrollbar CSS ===== */
+  /* Chrome, Edge, and Safari */
+  .messages::-webkit-scrollbar {
     width: 16px;
-}
+  }
 
-
-#messages::-webkit-scrollbar-thumb {
+  .messages::-webkit-scrollbar-thumb {
     background-color: #212121;
     border-radius: 10px;
     border: 0px none #ffffff;
-}
+  }
+  .chat {
+    background-color: #2b2b2b;
+    height: 240px;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid #1a1a1a;
+  }
 
+  input {
+    margin-top: auto;
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: #222222;
+    color: #ddca7e;
+    border-radius: 5px;
+  }
 </style>
