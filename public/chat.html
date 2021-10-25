@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width,initial-scale=1'>
+
+    <title>Svelte app</title>
+
+    <link rel='icon' type='image/png' href='/mine.png'>
+    <link rel='stylesheet' href='/global.css'>
+
+    <script src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"></script>
+
+    <script>
+    var client = new Colyseus.Client('ws://localhost:2567');
+
+    client.joinOrCreate("my_room").then(room => {
+        console.log(room.sessionId, "joined", room.name);
+    }).catch(e => {
+        console.log("JOIN ERROR", e);
+    });
+    </script>
+</head>
+
+<body>
+
+
+</body>
+</html>
