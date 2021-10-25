@@ -64,14 +64,4 @@
     background-color: #fff;
     pointer-events: none;
   }
-
-  .title div {
-    display: flex;
-    align-items: center;
-  }
-
-  .mine {
-    font-weight: bold;
-    color: red;
-  }
 </style>
