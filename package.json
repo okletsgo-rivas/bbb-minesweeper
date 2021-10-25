@@ -25,6 +25,7 @@
     "@tsconfig/svelte": "^2.0.0"
   },
   "dependencies": {
+    "colyseus.js": "^0.14.13",
     "sirv-cli": "^1.0.0"
   }
 }
