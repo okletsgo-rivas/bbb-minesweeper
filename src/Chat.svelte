@@ -1,25 +1,22 @@
-<!-- <script lang="ts" context="module">
-  import { Client, Room } from "colyseus.js";
-  let client = new Client("http://localhost:2567");
-</script> -->
 <script lang="ts">
   import { onMount } from "svelte";
-  // import { Client, Room } from "colyseus.js";
-  // import * as Colyseus from "colyseus.js";
+  import { Client, Room } from "colyseus.js";
 
   let chatInput;
-  let messages = [];
-  let room;
+  let messages: string[] = [];
+  let room: Room<any>;
 
   onMount(async () => {
-    // let client = new Client("ws://localhost:2567");
-    let client = new Colyseus.Client("ws://localhost:2567");
-    room = await client.joinOrCreate("chat_room");
-    room.state.messages.onAdd = (message, key) => {
-      messages.push(message);
-      // Scroll to bottom of chat
-      // messages.scrollTo(0, messages.scrollHeight);
-    };
+    const client = new Client("ws://localhost:2567");
+    (async () => {
+      room = await client.joinOrCreate<any>("chat_room");
+      room.state.messages.onAdd = (message, key) => {
+        console.log(message, key);
+        messages = [...messages, message];
+        // Scroll to bottom of chat
+        // messages.scrollTo(0, messages.scrollHeight);
+      };
+    })();
   });
 
   function keyup(e) {

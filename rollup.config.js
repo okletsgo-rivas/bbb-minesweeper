@@ -1,10 +1,11 @@
 import svelte from "rollup-plugin-svelte";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
+import alias from "@rollup/plugin-alias";
+import typescript from "@rollup/plugin-typescript";
 import livereload from "rollup-plugin-livereload";
 import { terser } from "rollup-plugin-terser";
 import sveltePreprocess from "svelte-preprocess";
-import typescript from "@rollup/plugin-typescript";
 import css from "rollup-plugin-css-only";
 
 const production = !process.env.ROLLUP_WATCH;
@@ -35,13 +36,17 @@ function serve() {
 }
 
 export default {
+  // external: ["https", "http", "url"],
   input: "src/main.ts",
-  output: {
-    sourcemap: true,
-    format: "iife",
-    name: "app",
-    file: "public/build/bundle.js",
-  },
+  output: [
+    {
+      // globals: { https: "https", http: "http", url: "url" },
+      sourcemap: true,
+      format: "iife",
+      name: "app",
+      file: "public/build/bundle.js",
+    },
+  ],
   plugins: [
     svelte({
       preprocess: sveltePreprocess({ sourceMap: !production }),
@@ -59,9 +64,25 @@ export default {
     // some cases you'll need additional configuration -
     // consult the documentation for details:
     // https://github.com/rollup/plugins/tree/master/packages/commonjs
+    alias({
+      entries: [
+        // httpie: force XHR implementation on browser/UMD environment
+        { find: "httpie", replacement: "./node_modules/httpie/xhr/index.js" },
+
+        // ws: force browser.js version.
+        { find: "ws", replacement: "./node_modules/ws/browser.js" },
+
+        // @colyseus/schema: force browser version.
+        {
+          find: "@colyseus/schema",
+          replacement: "./node_modules/@colyseus/schema/build/umd/index.js",
+        },
+      ],
+    }),
     resolve({
       browser: true,
       dedupe: ["svelte"],
+      mainFields: ["browser"],
     }),
     commonjs(),
     typescript({
