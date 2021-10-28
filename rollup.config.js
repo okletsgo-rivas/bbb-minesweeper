@@ -1,7 +1,6 @@
 import svelte from "rollup-plugin-svelte";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
-import alias from "@rollup/plugin-alias";
 import typescript from "@rollup/plugin-typescript";
 import livereload from "rollup-plugin-livereload";
 import { terser } from "rollup-plugin-terser";
@@ -36,11 +35,9 @@ function serve() {
 }
 
 export default {
-  // external: ["https", "http", "url"],
   input: "src/main.ts",
   output: [
     {
-      // globals: { https: "https", http: "http", url: "url" },
       sourcemap: true,
       format: "iife",
       name: "app",
@@ -51,38 +48,14 @@ export default {
     svelte({
       preprocess: sveltePreprocess({ sourceMap: !production }),
       compilerOptions: {
-        // enable run-time checks when not in production
         dev: !production,
       },
     }),
-    // we'll extract any component CSS out into
-    // a separate file - better for performance
     css({ output: "bundle.css" }),
-
-    // If you have external dependencies installed from
-    // npm, you'll most likely need these plugins. In
-    // some cases you'll need additional configuration -
-    // consult the documentation for details:
-    // https://github.com/rollup/plugins/tree/master/packages/commonjs
-    alias({
-      entries: [
-        // httpie: force XHR implementation on browser/UMD environment
-        { find: "httpie", replacement: "./node_modules/httpie/xhr/index.js" },
-
-        // ws: force browser.js version.
-        { find: "ws", replacement: "./node_modules/ws/browser.js" },
-
-        // @colyseus/schema: force browser version.
-        {
-          find: "@colyseus/schema",
-          replacement: "./node_modules/@colyseus/schema/build/umd/index.js",
-        },
-      ],
-    }),
     resolve({
       browser: true,
       dedupe: ["svelte"],
-      mainFields: ["browser"],
+      mainFields: ["browser", "jsnext:main", "module", "main"],
     }),
     commonjs(),
     typescript({
@@ -90,16 +63,8 @@ export default {
       inlineSources: !production,
     }),
 
-    // In dev mode, call `npm run start` once
-    // the bundle has been generated
     !production && serve(),
-
-    // Watch the `public` directory and refresh the
-    // browser on changes when not in production
     !production && livereload("public"),
-
-    // If we're building for production (npm run build
-    // instead of npm run dev), minify
     production && terser(),
   ],
   watch: {
