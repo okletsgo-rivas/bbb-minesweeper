@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
   export const TileType = {
     MINE: "MINE",
     NUMBER: "NUMBER",
@@ -7,19 +7,33 @@
 </script>
 
 <script lang="ts">
-  export let id: number;
-  export let x: number;
-  export let y: number;
-  export let type: string;
-  export let label: string;
-  export let flag: boolean = false;
-  export let hide: boolean;
+  import { preventDefault } from 'svelte/legacy';
+
+  interface Props {
+    id: number;
+    x: number;
+    y: number;
+    type: string;
+    label: string;
+    flag?: boolean;
+    hide: boolean;
+  }
+
+  let {
+    id,
+    x,
+    y,
+    type,
+    label,
+    flag = $bindable(false),
+    hide = $bindable()
+  }: Props = $props();
 
   export function reset() {
     hide = true;
   }
 
-  let el;
+  let el = $state();
 </script>
 
 <svelte:body />
@@ -28,8 +42,8 @@
   bind:this={el}
   class="tile"
   class:flipped={!hide}
-  on:click={() => (hide = false)}
-  on:contextmenu|preventDefault={() => (flag = !flag)}
+  onclick={() => (hide = false)}
+  oncontextmenu={preventDefault(() => (flag = !flag))}
 >
   {#if !hide}
     {#if type === TileType.MINE}

@@ -1,26 +1,42 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { Client, Room } from "colyseus.js";
+
   import Tile, { TileType } from "./Tile.svelte";
   import Chat from "./Chat.svelte";
 
-  export let width;
-  export let height;
+  /** @type {{width: number,height:number}} */
+  let { width, height } = $props();
 
   const mineRatio = 0.20625; // classic windows xp ratio
-  let field = Array.from(Array(width * height)).map((_, i) => ({
-    id: i,
-    x: i % width,
-    y: Math.floor(i / width),
-    type: null,
-    label: "",
-    flag: false,
-    ref: null,
-    hide: true,
-  }));
+  let field = $state(
+    Array.from(Array(width * height)).map((_, i) => ({
+      id: i,
+      x: i % width,
+      y: Math.floor(i / width),
+      type: null,
+      label: "",
+      flag: false,
+      ref: null,
+      hide: true,
+    }))
+  );
 
   onMount(() => {
+    connect();
     reset();
   });
+
+  async function connect() {
+    const client = new Client("ws://localhost:2567");
+    const room = await client.joinOrCreate<any>("game");
+    room.state.messages.onAdd = (message, key) => {
+      console.log(message, key);
+      // messages = [...messages, message];
+      // Scroll to bottom of chat
+      // messages.scrollTo(0, messages.scrollHeight);
+    };
+  }
 
   function reset() {
     field = field.map((_) => ({ ..._, type: null, flag: false, hide: true }));
@@ -53,7 +69,7 @@
 
 <main>
   <div>
-    <button on:click={reset}>New Game</button>
+    <button onclick={reset}>New Game</button>
   </div>
   <div style="overflow: hidden;">
     <div id="field" style={`width: ${width * 45}px`}>

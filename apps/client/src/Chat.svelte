@@ -1,22 +1,22 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Client, Room } from "colyseus.js";
+  import { get } from "svelte/store";
 
-  let chatInput;
+  let chatInput = $state();
   let messages: string[] = [];
-  let room: Room<any>;
+  let room = { send: (id, msg) => {} };
 
   onMount(async () => {
-    const client = new Client("ws://localhost:2567");
-    (async () => {
-      room = await client.joinOrCreate<any>("chat_room");
-      room.state.messages.onAdd = (message, key) => {
-        console.log(message, key);
-        messages = [...messages, message];
-        // Scroll to bottom of chat
-        // messages.scrollTo(0, messages.scrollHeight);
-      };
-    })();
+    // const client = new Client("ws://localhost:2567");
+    // (async () => {
+    //   room = await client.joinOrCreate<any>("game");
+    //   room.state.messages.onAdd = (message, key) => {
+    //     console.log(message, key);
+    //     messages = [...messages, message];
+    //     // Scroll to bottom of chat
+    //     // messages.scrollTo(0, messages.scrollHeight);
+    //   };
+    // })();
   });
 
   function keyup(e) {
@@ -27,12 +27,12 @@
 </script>
 
 <div class="chat">
-  <div class="messages" on:change={() => {}}>
+  <div class="messages" onchange={() => {}}>
     {#each messages as msg}
       <p>{msg}</p>
     {/each}
   </div>
-  <input bind:value={chatInput} type="text" id="chat-input" on:keyup={keyup} />
+  <input bind:value={chatInput} type="text" id="chat-input" onkeyup={keyup} />
 </div>
 
 <style>
