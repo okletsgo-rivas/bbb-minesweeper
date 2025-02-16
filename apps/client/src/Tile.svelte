@@ -7,7 +7,8 @@
 </script>
 
 <script lang="ts">
-  import { preventDefault } from 'svelte/legacy';
+  import { preventDefault } from "svelte/legacy";
+  import { serverRoom } from "./store";
 
   interface Props {
     id: number;
@@ -19,18 +20,25 @@
     hide: boolean;
   }
 
-  let {
-    id,
-    x,
-    y,
-    type,
-    label,
-    flag = $bindable(false),
-    hide = $bindable()
-  }: Props = $props();
+  let { id, x, y, type, label, flag, hide }: Props = $props();
 
   export function reset() {
     hide = true;
+  }
+
+  function action(type: string) {
+    console.log("client", id, type);
+    switch (type) {
+      case "select":
+        $serverRoom?.send("tile", { id, action: "select" });
+        break;
+      case "flag":
+        $serverRoom?.send("tile", { id, action: "flag" });
+        break;
+      default:
+        console.log("action not found");
+    }
+    // room.send("message", chatInput);
   }
 
   let el = $state();
@@ -38,12 +46,12 @@
 
 <svelte:body />
 
-<div
+<button
   bind:this={el}
   class="tile"
   class:flipped={!hide}
-  onclick={() => (hide = false)}
-  oncontextmenu={preventDefault(() => (flag = !flag))}
+  onclick={() => action("select")}
+  oncontextmenu={preventDefault(() => action("flag"))}
 >
   {#if !hide}
     {#if type === TileType.MINE}
@@ -54,10 +62,12 @@
   {:else if flag}
     <img src="./flag.png" alt="Flag" />
   {/if}
-</div>
+</button>
 
 <style>
   .tile {
+    margin: 0;
+    padding: 0.375rem;
     float: left;
     color: #444;
     font-size: 2rem;
@@ -66,7 +76,6 @@
     width: 45px;
     height: 45px;
     text-align: center;
-    line-height: 45px;
     background-color: #ccc;
   }
 
