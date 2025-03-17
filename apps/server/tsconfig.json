@@ -8,10 +8,9 @@
     "strictNullChecks": false,
     "esModuleInterop": true,
     "experimentalDecorators": true,
+    "useDefineForClassFields": false,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

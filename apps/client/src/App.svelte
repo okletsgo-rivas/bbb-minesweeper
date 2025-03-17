@@ -14,10 +14,10 @@
 </script>
 
 <main>
-  <div style="overflow: hidden;">
-    <div id="field" style={`width: ${width * 45}px`}>
-      {#each $field as props (props.id)}
-        <Tile bind:this={props.ref} {...props} />
+  <div class="field-container">
+    <div class="field" style={`width: ${width * 45}px`}>
+      {#each $field as tile (tile.id)}
+        <Tile data={tile} />
       {/each}
     </div>
   </div>
@@ -28,14 +28,22 @@
   :global(body) {
     background-color: #2b2b2b;
     font-size: 12px;
-    font-family: arial;
-    display: flex;
-    flex-direction: column;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     min-height: 100vh;
     padding: 0;
   }
 
   main {
-    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .field-container {
+    padding: 1rem;
+  }
+
+  .field {
+    margin: 0 auto;
   }
 </style>

@@ -4,30 +4,55 @@
     NUMBER: "NUMBER",
     BLANK: "BLANK",
   };
-</script>
 
-<script lang="ts">
-  import { preventDefault } from "svelte/legacy";
-  import { serverRoom } from "./store";
+  type FieldType = "flag" | "hide";
+  interface IChange {
+    dynamicIndex: number | undefined;
+    field: FieldType;
+    op: number;
+    previousValue: boolean | string;
+    value: boolean | null;
+  }
 
-  interface Props {
-    id: number;
+  export interface ITileState {
+    flag: boolean;
+    hide: boolean;
+  }
+  export interface ITile extends ITileState {
+    id: string;
+    index: number;
     x: number;
     y: number;
     type: string;
     label: string;
-    flag?: boolean;
-    hide: boolean;
+    onChange?: (change: IChange[]) => void;
   }
+</script>
 
-  let { id, x, y, type, label, flag, hide }: Props = $props();
+<script lang="ts">
+  import { onMount } from "svelte";
+
+  import { serverRoom } from "./store";
+
+  let { data } = $props();
+  let { id, index, x, y, type, label, ...changeable } = data;
+  let tileState = $state<ITileState>(changeable);
+
+  onMount(() => {
+    data.onChange = (change: IChange[]) => {
+      change.forEach((_) => {
+        tileState[_.field] = _.value || false;
+      });
+    };
+  });
 
   export function reset() {
-    hide = true;
+    tileState.hide = true;
   }
 
-  function action(type: string) {
-    console.log("client", id, type);
+  function action(e: MouseEvent, type: string) {
+    e.preventDefault();
+
     switch (type) {
       case "select":
         $serverRoom?.send("tile", { id, action: "select" });
@@ -49,17 +74,17 @@
 <button
   bind:this={el}
   class="tile"
-  class:flipped={!hide}
-  onclick={() => action("select")}
-  oncontextmenu={preventDefault(() => action("flag"))}
+  class:flipped={!tileState.hide}
+  onclick={(e) => action(e, "select")}
+  oncontextmenu={(e) => action(e, "flag")}
 >
-  {#if !hide}
+  {#if !tileState.hide}
     {#if type === TileType.MINE}
       <img src="./mine.png" alt="Mine" />
     {:else}
-      <span>{@html label}</span>
+      <span class={"num-" + label}>{@html label}</span>
     {/if}
-  {:else if flag}
+  {:else if tileState.flag}
     <img src="./flag.png" alt="Flag" />
   {/if}
 </button>
@@ -70,7 +95,9 @@
     padding: 0.375rem;
     float: left;
     color: #444;
+    font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
     font-size: 2rem;
+    line-height: 0;
     cursor: pointer;
     outline: 1px solid #444;
     width: 45px;
@@ -86,5 +113,30 @@
   .tile.flipped {
     background-color: #fff;
     pointer-events: none;
+  }
+
+  .num-1 {
+    color: #0201f8;
+  }
+  .num-2 {
+    color: #007e00;
+  }
+  .num-3 {
+    color: #ff0100;
+  }
+  .num-4 {
+    color: #030083;
+  }
+  .num-5 {
+    color: #7f0201;
+  }
+  .num-6 {
+    color: #008183;
+  }
+  .num-7 {
+    color: #000101;
+  }
+  .num-8 {
+    color: #818180;
   }
 </style>

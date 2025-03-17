@@ -19,28 +19,17 @@ export class MyRoom extends Room<MyRoomState> {
       this.broadcast("message", `${client.sessionId}: ${message}`);
       this.state.messages.push(`${client.sessionId}: ${message}`);
     });
-    this.onMessage("tile", (client, data) => {
-      console.log("Tile ", client.sessionId, ":", data);
-      switch (data.action) {
-        case 'select':
-          this.state.updateTileSelect(client.sessionId, data.id);
-          break;
-        case 'flag':
-          this.state.updateTileFlag(client.sessionId, data.id);
-          break;
-      }
-      // this.broadcast("field", tile);
-      // this.state.messages.push(`${client.sessionId}: ${message}`);
-    });
+    this.onMessage("tile", this.state.actionHandler);
 
     const w = options.size.width;
     const h = options.size.height;
     const field =
       Array.from(Array(w * h)).map((_, i) => {
         const tile = new Tile();
-        tile.id = i;
+        tile.index = i;
         tile.x = i % w;
         tile.y = Math.floor(i / w);
+        tile.id = `cell-${tile.x}-${tile.y}`;
         tile.type = "";
         tile.label = "";
         tile.flag = false;
