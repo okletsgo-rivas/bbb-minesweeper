@@ -16,7 +16,7 @@ export const connect = async () => {
       field.update((state) => [...state, tile]);
     }
 
-    room.state.messages.onAdd = (message) => {
+    room.state.messages.onAdd = (message: string) => {
       chat.update((state) => [...state, message]);
     };
   } catch (e) {
