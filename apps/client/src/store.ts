@@ -20,6 +20,7 @@ export const connect = async () => {
     if (gameSessionString) {
       const gameSession: IGameSession = JSON.parse(gameSessionString);
       room = await client.reconnect(gameSession.id, gameSession.sessionId);
+      room.send('message', 'reconnected!')
     } else {
       room = await client.joinOrCreate<any>("game", { size: { width: 9, height: 9 } });
       const gameSession: string = JSON.stringify({ id: room.id, sessionId: room.sessionId });
@@ -35,6 +36,7 @@ export const connect = async () => {
     room.state.messages.onAdd = (message: string) => {
       chat.update((state) => [...state, message]);
     };
+
   } catch (e) {
     window.sessionStorage.removeItem('bbb-minesweeper');
     console.error(e);
