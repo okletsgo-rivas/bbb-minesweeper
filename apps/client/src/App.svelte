@@ -32,6 +32,9 @@
     min-height: 100vh;
     padding: 0;
   }
+  :global(div) {
+    box-sizing: content-box;
+  }
 
   main {
     display: flex;

@@ -27,27 +27,28 @@
 
 <style>
   .chat {
-    background-color: #000;
     flex-grow: 1;
     margin-top: auto;
     display: flex;
     flex-direction: column;
     border-top: 1px solid #1a1a1a;
+    overflow: hidden;
+    background-color: #000;
   }
 
   .messages {
-    padding: 10px 20px 0 20px;
+    margin: 10px;
+    padding: 0 10px;
     overflow-y: scroll;
     color: #ddca7e;
 
     overflow-y: auto;
-    scrollbar-width: auto;
     scrollbar-color: #1a1a1a;
   }
   /* ===== Scrollbar CSS ===== */
   /* Chrome, Edge, and Safari */
   .messages::-webkit-scrollbar {
-    width: 16px;
+    width: 0.5rem;
   }
 
   .messages::-webkit-scrollbar-thumb {
