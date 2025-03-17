@@ -1,15 +1,31 @@
 import { writable, readable } from 'svelte/store';
-import { Client } from 'colyseus.js';
+import { Client, Room } from 'colyseus.js';
 import type { ITile } from './lib/Tile.svelte';
 
 export let chat = writable<string[]>([]);
 export let field = writable<any[]>([]);
 export let serverRoom = writable<any>();
 
+interface IGameSession {
+  sessionId: string;
+  id: string;
+}
+
 export const connect = async () => {
   const client = new Client("ws://localhost:2567");
+  const gameSessionString = window.sessionStorage.getItem('bbb-minesweeper');
+  let room: Room;
+
   try {
-    const room = await client.joinOrCreate<any>("game", { size: { width: 9, height: 9 } });
+    if (gameSessionString) {
+      const gameSession: IGameSession = JSON.parse(gameSessionString);
+      room = await client.reconnect(gameSession.id, gameSession.sessionId);
+    } else {
+      room = await client.joinOrCreate<any>("game", { size: { width: 9, height: 9 } });
+      const gameSession: string = JSON.stringify({ id: room.id, sessionId: room.sessionId });
+      window.sessionStorage.setItem('bbb-minesweeper', gameSession);
+    }
+
     serverRoom.set(room);
 
     room.state.field.onAdd = (tile: ITile) => {
@@ -20,6 +36,8 @@ export const connect = async () => {
       chat.update((state) => [...state, message]);
     };
   } catch (e) {
+    window.sessionStorage.removeItem('bbb-minesweeper');
     console.error(e);
+    connect();
   }
 }

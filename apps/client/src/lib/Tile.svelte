@@ -70,7 +70,12 @@
 >
   {#if !tileState.hide}
     {#if type === TileType.MINE}
-      <img src="./mine.png" alt="Mine" />
+      <div
+        class="mine"
+        style:background-color={userId === tileState.player ? "#ccf" : "#fcc"}
+      >
+        <img src="./mine.png" alt="Mine" />
+      </div>
     {:else}
       <span class={"num-" + label}>{@html label}</span>
     {/if}
@@ -103,6 +108,10 @@
   .tile.flipped {
     background-color: #fff;
     pointer-events: none;
+  }
+
+  .mine {
+    margin: -0.375rem;
   }
 
   .num-1 {

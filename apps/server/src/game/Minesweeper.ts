@@ -1,4 +1,4 @@
-import { Tile } from "../rooms/schema/MyRoomState";
+import { Tile } from "../rooms/schema/GameRoomState";
 
 export const TileType = {
   MINE: "MINE",

@@ -35,7 +35,7 @@ export class Tile extends Schema {
     player: this.player
   });
 }
-export class MyRoomState extends Schema {
+export class GameRoomState extends Schema {
   @type(["string"]) messages = new ArraySchema<string>();
   @type([Tile]) field = new ArraySchema<Tile>();
 
