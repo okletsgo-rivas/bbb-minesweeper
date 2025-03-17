@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { serverRoom, chat } from "./store";
+  import { serverRoom, chat } from "../store";
 
   let chatInput = $state();
   let chatBox: HTMLDivElement;
 
   $effect(() => {
     $chat;
-    console.log("hit", chatBox);
     chatBox.scrollTop = chatBox.scrollHeight;
   });
 

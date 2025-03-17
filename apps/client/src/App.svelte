@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  import Tile, { TileType } from "./Tile.svelte";
-  import Chat from "./Chat.svelte";
+  import Tile, { TileType } from "./lib/Tile.svelte";
+  import Chat from "./lib/Chat.svelte";
   import { connect, field } from "./store";
 
   /** @type {{width: number,height:number}} */

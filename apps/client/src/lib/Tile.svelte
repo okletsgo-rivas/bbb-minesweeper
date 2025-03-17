@@ -5,18 +5,20 @@
     BLANK: "BLANK",
   };
 
-  type FieldType = "flag" | "hide";
+  type FieldType = "flag" | "hide" | "player";
+  type FieldValue = boolean | string | null;
   interface IChange {
     dynamicIndex: number | undefined;
     field: FieldType;
     op: number;
-    previousValue: boolean | string;
-    value: boolean | null;
+    previousValue: FieldValue;
+    value: FieldValue;
   }
 
   export interface ITileState {
-    flag: boolean;
-    hide: boolean;
+    flag: boolean | null;
+    hide: boolean | null;
+    player: string | null;
   }
   export interface ITile extends ITileState {
     id: string;
@@ -32,16 +34,18 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  import { serverRoom } from "./store";
+  import { serverRoom } from "../store";
+  import Flag from "./Flag.svelte";
 
   let { data } = $props();
   let { id, index, x, y, type, label, ...changeable } = data;
   let tileState = $state<ITileState>(changeable);
+  let userId = $derived($serverRoom.sessionId);
 
   onMount(() => {
     data.onChange = (change: IChange[]) => {
       change.forEach((_) => {
-        tileState[_.field] = _.value || false;
+        tileState[_.field] = _.value;
       });
     };
   });
@@ -50,29 +54,15 @@
     tileState.hide = true;
   }
 
-  function action(e: MouseEvent, type: string) {
+  function action(e: MouseEvent, action: string) {
     e.preventDefault();
-
-    switch (type) {
-      case "select":
-        $serverRoom?.send("tile", { id, action: "select" });
-        break;
-      case "flag":
-        $serverRoom?.send("tile", { id, action: "flag" });
-        break;
-      default:
-        console.log("action not found");
-    }
-    // room.send("message", chatInput);
+    $serverRoom?.send("tile", { id, action });
   }
-
-  let el = $state();
 </script>
 
 <svelte:body />
 
 <button
-  bind:this={el}
   class="tile"
   class:flipped={!tileState.hide}
   onclick={(e) => action(e, "select")}
@@ -85,7 +75,7 @@
       <span class={"num-" + label}>{@html label}</span>
     {/if}
   {:else if tileState.flag}
-    <img src="./flag.png" alt="Flag" />
+    <Flag color={userId === tileState.player ? "blue" : "red"} />
   {/if}
 </button>
 

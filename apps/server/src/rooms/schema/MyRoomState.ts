@@ -65,8 +65,13 @@ export class MyRoomState extends Schema {
 
   private updateTileFlag(sessionId: string, tile: Tile) {
     if (tile.hide) {
-      tile.flag = !tile.flag;
-      tile.player = tile.flag ? sessionId : undefined;
+      if (!tile.flag) {
+        tile.flag = true;
+        tile.player = sessionId;
+      } else if (tile.player === sessionId) {
+        tile.flag = false;
+        tile.player = null;
+      }
     }
   }
 
