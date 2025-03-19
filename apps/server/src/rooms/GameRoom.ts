@@ -25,14 +25,15 @@ export class GameRoom extends Room<GameRoomState> {
   }
 
   onJoin(client: Client, options: any) {
-    const msg = `${client.sessionId} joined!`;
+    const msg = `${options.username} joined!`;
     console.log(msg);
     this.state.messages.push(msg);
-    this.state.players.set(client.sessionId, new Player(client.sessionId));
+    this.state.players.set(client.sessionId, new Player(options.username, client.sessionId));
   }
 
   async onLeave(client: Client, consented: boolean) {
-    const msg = `${client.sessionId} left!`;
+    const player = this.state.players.get(client.sessionId).username;
+    const msg = `${player} left!`;
     console.log(msg);
     this.state.messages.push(msg);
 
@@ -41,7 +42,10 @@ export class GameRoom extends Room<GameRoomState> {
         throw new Error("consented leave");
       }
 
-      await this.allowReconnection(client, 20);
+      const reconnect = await this.allowReconnection(client, 20);
+      const msg = `${player} reconnected!`;
+      console.log(msg);
+      this.state.messages.push(msg);
     } catch (e) {
       this.disconnect();
     }

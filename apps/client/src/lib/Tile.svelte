@@ -34,7 +34,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import { serverRoom } from './store';
+	import { serverRoom } from '$lib/store';
 	import Flag from './Flag.svelte';
 
 	let { data } = $props();

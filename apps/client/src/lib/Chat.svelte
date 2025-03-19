@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { serverRoom, chat } from './store';
+	import { serverRoom, chat } from '$lib/store';
 
 	let chatInput = $state();
 	let chatBox: HTMLDivElement;

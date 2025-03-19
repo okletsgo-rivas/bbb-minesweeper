@@ -1,15 +1,16 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import type { PageProps } from './$types';
 
-	import Tile from '../../lib/Tile.svelte';
-	import Chat from '../../lib/Chat.svelte';
-	import { connect, field } from '../../lib/store';
+	import Tile from '$lib/Tile.svelte';
+	import Chat from '$lib/Chat.svelte';
+	import { reconnect, field } from '$lib/store';
 
-	/** @type {{width: number,height:number}} */
-	let { width = 9, height = 9 } = $props();
+	const width = 9;
+	let { data }: PageProps = $props();
 
 	onMount(() => {
-		connect();
+		reconnect(data.roomId, data.sessionId);
 	});
 </script>
 

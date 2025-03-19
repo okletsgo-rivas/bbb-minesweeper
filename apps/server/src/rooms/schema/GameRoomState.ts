@@ -37,14 +37,16 @@ export class Tile extends Schema {
 }
 
 export class Player extends Schema {
+  @type("string") username: string;
   @type("string") sessionId: string;
   @type("number") score: number = 0;
   @type("boolean") winner: boolean = false;
 
-  constructor(sessionId: string) {
+  constructor(username: string, sessionId: string) {
     super();
 
     this.sessionId = sessionId;
+    this.username = username;
   }
 }
 
