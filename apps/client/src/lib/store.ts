@@ -1,6 +1,6 @@
 import { writable, readable } from 'svelte/store';
 import { Client, Room } from 'colyseus.js';
-import type { ITile } from './lib/Tile.svelte';
+import type { ITile } from './Tile.svelte';
 
 export let chat = writable<string[]>([]);
 export let field = writable<any[]>([]);
