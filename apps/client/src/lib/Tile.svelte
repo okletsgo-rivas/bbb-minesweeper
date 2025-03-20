@@ -60,8 +60,6 @@
 	}
 </script>
 
-<svelte:body />
-
 <button
 	class="tile"
 	class:flipped={!tileState.hide}
@@ -71,13 +69,13 @@
 	{#if !tileState.hide}
 		{#if type === TileType.MINE}
 			<div class="mine" style:background-color={userId === tileState.player ? '#ccf' : '#fcc'}>
-				<img src="./mine.png" alt="Mine" />
+				<img src="/mine.png" alt="Mine" />
 			</div>
 		{:else}
 			<span class={'num-' + label}>{@html label}</span>
 		{/if}
 	{:else if tileState.flag}
-		<Flag color={userId === tileState.player ? 'blue' : 'red'} />
+		<Flag color={userId === tileState.player ? 'white' : 'red'} />
 	{/if}
 </button>
 
@@ -91,11 +89,10 @@
 		font-size: 2rem;
 		line-height: 0;
 		cursor: pointer;
-		outline: 1px solid #444;
 		width: 45px;
 		height: 45px;
 		text-align: center;
-		background-color: #ccc;
+		background-color: #444;
 	}
 
 	.tile img {
@@ -103,7 +100,8 @@
 	}
 
 	.tile.flipped {
-		background-color: #fff;
+		background-color: #ddd;
+		border-width: 0.5px;
 		pointer-events: none;
 	}
 

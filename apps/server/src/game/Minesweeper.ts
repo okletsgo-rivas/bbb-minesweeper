@@ -6,7 +6,7 @@ export const TileType = {
   BLANK: "BLANK",
 };
 
-export function Minesweeper(width: number, height: number): Tile[] {
+export function Minesweeper(width: number, height: number, mines: number): Tile[] {
   const w = width;
   const h = height;
   const field =
@@ -25,8 +25,8 @@ export function Minesweeper(width: number, height: number): Tile[] {
       return tile;
     });
 
-  const mineRatio = 0.20625; // classic windows xp ratio
-  let minesToPlace = Math.round(w * h * mineRatio);
+  // const mineRatio = w * h * 0.20625; // classic windows xp ratio
+  let minesToPlace = mines;
   while (minesToPlace > 0) {
     let tile = field[Math.floor(Math.random() * field.length)];
     if (tile.type !== TileType.MINE) {
@@ -36,13 +36,13 @@ export function Minesweeper(width: number, height: number): Tile[] {
     }
   }
   // field = field;
-  const mines = field.filter((_) => _.type === TileType.MINE);
+  const mineList = field.filter((_) => _.type === TileType.MINE);
   const noMines = field.filter((_) => _.type !== TileType.MINE);
 
   noMines.forEach((tile) => {
-    const totalMines = mines.filter(
-      (mine) =>
-        Math.abs(tile.x - mine.x) <= 1 && Math.abs(tile.y - mine.y) <= 1
+    const totalMines = mineList.filter(
+      (_) =>
+        Math.abs(tile.x - _.x) <= 1 && Math.abs(tile.y - _.y) <= 1
     ).length;
     tile.type = totalMines ? TileType.NUMBER : TileType.BLANK;
     tile.label = totalMines ? totalMines.toString() : "&nbsp;";

@@ -58,11 +58,9 @@
 	}
 
 	input {
-		margin-top: auto;
-		margin-left: 10px;
-		margin-right: 10px;
-		background-color: #222222;
-		color: #ddca7e;
+		margin: auto 10px 10px 10px;
+		background-color: #999;
+		color: #444;
 		border-radius: 5px;
 	}
 </style>

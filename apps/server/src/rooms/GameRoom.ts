@@ -2,26 +2,46 @@ import { Room, Client } from "colyseus";
 import { GameRoomState, Player } from "./schema/GameRoomState";
 import { Minesweeper } from "../game/Minesweeper";
 
-
-const defaultOptions = {
-  size: { width: 5, height: 5 }
-}
+const EDifficulty = {
+  BEGINNER: 'BEGINNER',
+  INTERMEDIATE: 'INTERMEDIATE',
+  EXPERT: 'EXPERT'
+};
 export class GameRoom extends Room<GameRoomState> {
 
   maxClients: number = 2;
 
-  onCreate(options: any = defaultOptions) {
+  onCreate(options: any) {
     this.setState(new GameRoomState());
 
     this.onMessage("message", (client, message) => {
-      console.log("Chat from", client.sessionId, ":", message);
-      this.state.messages.push(`${client.sessionId}: ${message}`);
+      const player = this.state.players.get(client.sessionId).username;
+      const msg = `${player}: ${message}`;
+      console.log(msg);
+      this.state.messages.push(msg);
     });
     this.onMessage("tile", this.state.actionHandler);
 
-    const { width, height } = options.size;
+    let width, height, mines;
 
-    this.state.field = Minesweeper(width, height);
+    switch (options.difficulty) {
+      case EDifficulty.BEGINNER:
+        width = 9;
+        height = 9; mines = 10;
+        break;
+      case EDifficulty.INTERMEDIATE:
+        width = 16;
+        height = 16;
+        mines = 40;
+        break;
+      case EDifficulty.EXPERT:
+        width = 16;
+        height = 16;
+        mines = 99;
+        break;
+    }
+
+    this.state.field = Minesweeper(width, height, mines);
   }
 
   onJoin(client: Client, options: any) {

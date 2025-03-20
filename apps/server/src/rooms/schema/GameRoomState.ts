@@ -108,13 +108,13 @@ export class GameRoomState extends Schema {
     this.gameOver = { winner, players: this.players };
 
     if (winner) {
-      this.messages.push(winner.sessionId + ' wins the game!');
+      this.messages.push(winner.username + ' wins the game!');
     } else {
       this.messages.push('Tied game!');
     }
 
     this.players.forEach((player: Player) => {
-      this.messages.push(`${player.sessionId}: ${player.score}`);
+      this.messages.push(`${player.username}: ${player.score}`);
     });
   }
 

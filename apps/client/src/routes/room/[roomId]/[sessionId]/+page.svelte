@@ -4,19 +4,20 @@
 
 	import Tile from '$lib/Tile.svelte';
 	import Chat from '$lib/Chat.svelte';
-	import { reconnect, field } from '$lib/store';
+	import { reconnect, field, serverRoom } from '$lib/store';
 
-	const width = 9;
 	let { data }: PageProps = $props();
 
 	onMount(() => {
-		reconnect(data.roomId, data.sessionId);
+		if (!$serverRoom) {
+			reconnect(data.roomId, data.sessionId);
+		}
 	});
 </script>
 
 <main>
 	<div class="field-container">
-		<div class="field" style={`width: ${width * 45}px`}>
+		<div class="field" style={`width: ${Math.sqrt($field.length) * 45}px`}>
 			{#each $field as tile (tile.id)}
 				<Tile data={tile} />
 			{/each}
